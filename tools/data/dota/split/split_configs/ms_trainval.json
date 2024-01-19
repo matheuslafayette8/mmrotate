@@ -1,18 +1,16 @@
 {
   "nproc": 10,
   "img_dirs": [
-    "data/DOTA/train/images/",
-    "data/DOTA/val/images/"
+    "dataset/stop_lines/dota/17_01"
   ],
   "ann_dirs": [
-    "data/DOTA/train/labelTxt/",
-    "data/DOTA/val/labelTxt/"
+    "dataset/stop_lines/dota/17_01"
   ],
   "sizes": [
-    1024
+    300
   ],
   "gaps": [
-    500
+    150
   ],
   "rates": [
     0.5,
