@@ -3,9 +3,9 @@ _base_ = [
     './_base_/lane_vec_stop_lines.py'
 ]
 
-max_epochs = 4 * 12
+max_epochs = 20 * 12
 base_lr = 0.004 / 16
-interval = 12
+interval = 60
 
 train_cfg = dict(
     type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=interval)
@@ -72,7 +72,7 @@ model = dict(
         act_cfg=dict(type='SiLU')),
     bbox_head=dict(
         type='RotatedRTMDetSepBNHead',
-        num_classes=3,
+        num_classes=4,
         in_channels=256,
         stacked_convs=2,
         feat_channels=256,

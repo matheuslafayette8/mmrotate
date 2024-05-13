@@ -13,16 +13,15 @@ def rotate_point(x, y, cx, cy, angle):
     return x_rot, y_rot
 
 def parse_xml(img_file):
-    
-    xml_file = input_image_file.replace("imgs", "labels").replace(".png", ".xml")
+    xml_file = input_image_file.replace("/imgs/", "/labels/").replace(".png", ".xml")
     
     # open image
     image = cv2.imread(img_file)
 
     # resize image to 800x800
     im_original_shape = image.shape
-    im_target_shape = (300, 300)
-    image = cv2.resize(image, im_target_shape)
+    im_target_shape = (600, 600, 3)
+    #image = cv2.resize(image, im_target_shape)
 
     image_cpy = image.copy()
     
@@ -45,7 +44,9 @@ def parse_xml(img_file):
         robndbox = obj.find('robndbox')
         points = obj.find('points').text
 
-        points = points.replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace(',', '').split(' ')
+        points = points.replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace(',', '')
+        points = points.replace("'", "")
+        points = points.split(' ')
 
         points = np.array(points, dtype=np.float32).reshape(-1, 2)
         # rescale points to target image shape
@@ -69,8 +70,6 @@ def parse_xml(img_file):
 
 def write_to_txt(bounding_boxes, output_file):
     with open(output_file, 'w') as f:
-        #f.write("imagesource:Test\n")
-        #f.write("gsd:0.00\n")
 
         for corners, class_name, difficult in bounding_boxes:
 
@@ -88,21 +87,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     dataset_name = args.dataset
-    input_xml_folder = f"dataset/stop_lines/complete_datasets/{dataset_name}/labels/"
-    input_image_folder = f"dataset/stop_lines/complete_datasets/{dataset_name}/imgs/"
-    output_txt_folder = f"dataset/stop_lines/dota/{dataset_name}/"
-
-    #cv2.namedWindow("image", cv2.WINDOW_NORMAL)
+    input_xml_folder = f"dataset/global_model/600/complete_datasets/{dataset_name}/labels/"
+    input_image_folder = f"dataset/global_model/600/complete_datasets/{dataset_name}/imgs/"
+    output_txt_folder = f"dataset/global_model/600/dota/{dataset_name}/"
+    
+    if not os.path.exists(output_txt_folder):
+        os.makedirs(output_txt_folder)
 
     # iterate on the input_xml_folder
     for input_image_file in glob.glob(input_image_folder + "*.png"):
-        #bounding_boxes = parse_xml(input_image_file)
         try:
             bounding_boxes = parse_xml(input_image_file)
+            input_xml_file = input_image_file.replace("/imgs/", "/labels/").replace(".png", ".xml")
+            output_txt_file = input_xml_file.replace(input_xml_folder, output_txt_folder).replace(".xml", ".txt")
+
+            write_to_txt(bounding_boxes, output_txt_file)
         except:
             print(f"error file: {input_image_file}")
-        
-        input_xml_file = input_image_file.replace("imgs", "labels").replace(".png", ".xml")
-
-        output_txt_file = input_xml_file.replace(input_xml_folder, output_txt_folder).replace(".xml", ".txt")
-        write_to_txt(bounding_boxes, output_txt_file)

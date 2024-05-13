@@ -5,9 +5,9 @@ import argparse
 
 def split_dataset(dataset, model, train_percentage, random_seed):
     # Configuração dos caminhos
-    input_folder = f"dataset/{model}/dota/{dataset}/"
-    train_output_folder = f"dataset/{model}/dota/{dataset}/train/"
-    val_output_folder = f"dataset/{model}/dota/{dataset}/val/"
+    input_folder = f"dataset/{model}/600/dota/{dataset}/"
+    train_output_folder = f"dataset/{model}/600/dota/{dataset}/train/"
+    val_output_folder = f"dataset/{model}/600/dota/{dataset}/val/"
 
     # Criar pastas de treino e validação
     os.makedirs(train_output_folder, exist_ok=True)

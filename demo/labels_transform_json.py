@@ -8,10 +8,11 @@ import cv2
 import shutil
 import json
 
+
 TRT_LOGGER = trt.Logger()
 
-engine_file = '/persistent/mmrotate/models/05_01/05_01.engine'
-lib_path = '/persistent/mmrotate/models/mmdeploy_plugin/libmmdeploy_tensorrt_ops.so'
+engine_file = '/persistent/models/02_05_2024.engine'
+lib_path = '/persistent/mmrotate/parking_spaces/models/mmdeploy_plugins/libmmdeploy_tensorrt_ops.so'
 ctypes.CDLL(lib_path)
 logger = trt.Logger(trt.Logger.WARNING)
 
@@ -30,8 +31,8 @@ def get_bounding_box(image, output_list, threshold):
         length = entry["length"]
         angle = entry["angle"]
 
-        x, y = [coord * image_size / 320 for coord in coordinates]
-        width, length = [value * image_size / 320 for value in (width, length)]
+        x, y = [coord * image_size / 640 for coord in coordinates]
+        width, length = [value * image_size / 640 for value in (width, length)]
 
         rect = ((x, y), (width, length), np.degrees(angle))
         box = cv2.boxPoints(rect)
@@ -41,6 +42,7 @@ def get_bounding_box(image, output_list, threshold):
             "bouding box": idx,
             "cx": x,
             "cy": y,
+            "class": class_id,
             "width": width,
             "length": length,
             "angle": angle,
@@ -52,7 +54,7 @@ def get_bounding_box(image, output_list, threshold):
 
 
 def preprocess(image):
-    image = cv2.resize(image, (320, 320))
+    image = cv2.resize(image, (640, 640))
     mean = np.array([0.485, 0.456, 0.406]).astype('float32')
     stddev = np.array([0.229, 0.224, 0.225]).astype('float32')
     data = (np.asarray(image).astype('float32') / float(255.0) - mean) / stddev
@@ -141,7 +143,7 @@ def inference(engine, img):
 
 
 def main():
-    folder_path_out = "/persistent/mmrotate/metrics/new_revised_data_09_01/results_model_05_01_json/"
+    folder_path_out = "/persistent/testes/metrics/02_05/"
     if os.path.exists(folder_path_out):
         shutil.rmtree(folder_path_out)
         print(f"Folder '{folder_path_out}' and its contents removed.")
@@ -149,7 +151,7 @@ def main():
     os.makedirs(folder_path_out)
     print(f"Folder '{folder_path_out}' created.")
 
-    folder_path_in = "/persistent/mmrotate/datasets/revised_new_data_09_01/imgs/"
+    folder_path_in = "/home/openmmlab/mmrotate/dataset/global_model/600/sub_datasets/bev_imgs_vinicius_new_office/low_high_igi_imgs/"
     files = os.listdir(folder_path_in)
 
     with load_engine(engine_file) as engine:
@@ -159,8 +161,8 @@ def main():
                 image_path = os.path.join(folder_path_in, file)
                 image = cv2.imread(image_path)
 
-                if len(image.shape) == 2:
-                    image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+                # if len(image.shape) == 2:
+                #     image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
 
                 output_list = inference(engine, image)
                 threshold = 0.2

@@ -29,6 +29,9 @@ def parse_xml(xml_file):
 
     for obj in root.findall('object'):
         name = obj.find('name').text
+        if name != "parking_space" and name != "parking_spot" and name != "bounding box rotacionada":
+            print(f"{name} in file {xml_file}")
+            continue
         robndbox = obj.find('robndbox')
         points = obj.find('points').text
 
@@ -79,7 +82,7 @@ def write_to_txt(bounding_boxes, output_file):
 
 
 if __name__ == "__main__":
-    dataset_name = "15_01"
+    dataset_name = "26_02_subset"
     input_xml_folder = "dataset/parking_spaces/complete_datasets/" + dataset_name + "/labels/"
     input_image_folder = "dataset/parking_spaces/complete_datasets/" + dataset_name + "/imgs/"
     output_txt_folder = "dataset/parking_spaces/dota/" + dataset_name + "/"

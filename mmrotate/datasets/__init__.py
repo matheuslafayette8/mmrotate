@@ -8,5 +8,6 @@ from .lane_vec import LaneVecParkingSpacesDataset, LaneVecStopLinesDataset
 
 __all__ = [
     'DOTADataset', 'DOTAv15Dataset', 'DOTAv2Dataset', 'HRSCDataset',
-    'DIORDataset', 'LaneVecParkingSpacesDataset', 'LaneVecStopLinesDataset'
+    'DIORDataset', 'LaneVecParkingSpacesDataset', 'LaneVecStopLinesDataset',
+    'LaneVecDataset'
 ]

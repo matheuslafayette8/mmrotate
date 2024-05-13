@@ -1,8 +1,12 @@
 _base_ = [
     './_base_/default_runtime.py', './_base_/schedule_3x.py',
-    './_base_/lane_vec.py'
+    './_base_/lane_vec_parking_spaces.py'
 ]
 checkpoint = 'https://download.openmmlab.com/mmdetection/v3.0/rtmdet/cspnext_rsb_pretrain/cspnext-l_8xb256-rsb-a1-600e_in1k-6a760974.pth'  # noqa
+
+max_epochs = 5 * 12
+base_lr = 0.004 / 16
+interval = 12
 
 angle_version = 'le90'
 model = dict(
@@ -35,7 +39,7 @@ model = dict(
         act_cfg=dict(type='SiLU')),
     bbox_head=dict(
         type='RotatedRTMDetSepBNHead',
-        num_classes=1,
+        num_classes=4,
         in_channels=256,
         stacked_convs=2,
         feat_channels=256,
